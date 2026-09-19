@@ -4,21 +4,26 @@
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| Nadia Sabrina Khoiriyah | 103072400087 | [pitfall/bagian yang dikerjakan] |
+| Nadia Sabrina Khoiriyah | 103072400087 | pitfall latency is zero/bagian 1 |
 | Fadhil Rizqi Adiyatma | 103072400021 | pitfall the network is reliable/bagian 2 |
 | M. Naufal Falih Alhaqi | 103072400027 | Single point of failure karena arsitektur monolitik/bagian 3 |
 
 ## Pitfall 1: [Latency is zero] — ditulis oleh [Nadia Sabrina Khoiriyah]
 
-**Bukti di skenario:** [kutip/paraphrase bagian skenario]
+**Bukti di skenario:** 
+Pada kasus FoodGo tidak ada timeout sama sekali pada pemanggilan antar service (order module memanggil payment module dan menunggu tanpa batas waktu)
 
-**Kenapa ini keliru:** [penjelasan]
+**Kenapa ini keliru:**
+Latency is zero menganggap kalau komunikasi antar service tidak mengalami keterlambatan yang perlu diperhatikan. Pemanggilan melalui jaringan membutuhkan waktu, dan waktu bisa berubah, contohnya saat service yang dituju mengalami beban tinggi. Jadi sistem tidak seharusnya menganggap respon dari service lain akan diterima cepat.
 
-**Dampak ke FoodGo:** [mekanisme kegagalan konkret]
+**Dampak ke FoodGo:**
+Tidak adanya timeout akan menyebabkan request dari order module yang menunggu payment module terus menggunakan resource contohnya thread. Saat traffic meningkat maka semakin banyak request dalam kondisi menunggu yang dapat mengurangi kemampuan server saat menangani request baru dan akan mennyebabkan aplikasi semakin lambat dan terjadi timeout.
 
-**Solusi desain awal:** [usulan solusi]
+**Solusi desain awal:** 
+Menerapkan timeout tiap pemanggilan antarservice. Jadi contohnya saat payment module tidak memberi respon maka order module akan berhenti menunggu dan menjalankan mekanisme penanganan kegagalan.
 
-**Trade-off:** [apa yang dikorbankan/risiko dari solusi ini]
+**Trade-off:**
+Timeout yang singkat menyebabkan request gagal. Jadi batas waktu perlu ditentukan secara tepat.
 
 ---
 
