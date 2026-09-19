@@ -5,10 +5,10 @@
 | Nama | NIM | Kontribusi |
 |---|---|---|
 | Nadia Sabrina Khoiriyah | 103072400087 | [pitfall/bagian yang dikerjakan] |
-| Fadhil Rizqi Adiyatma | 103072400021 | [pitfall/bagian yang dikerjakan] |
+| Fadhil Rizqi Adiyatma | 103072400021 | pitfall the network is reliable/bagian 2 |
 | M. Naufal Falih Alhaqi | 103072400027 | pitfall/bagian 3 |
 
-## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 1: [Latency is zero] — ditulis oleh [Nadia Sabrina Khoiriyah]
 
 **Bukti di skenario:** [kutip/paraphrase bagian skenario]
 
@@ -22,9 +22,27 @@
 
 ---
 
-## Pitfall 2: [nama pitfall] — ditulis oleh [nama]
+## Pitfall 2: [the network is reliable] — ditulis oleh [Fadhil Rizqi Adiyatma]
 
-(ulangi struktur di atas)
+**Bukti dari kasus**
+
+Pada case foodGo # network is always reliable, no need for retry, menunjukkan bahwa FoodGo menganggap komunikasi jaringan selalu dapat diandalkan sehingga tidak menyediakan mekanisme untuk mencoba kembali request yang gagal.  
+
+**Kenapa keliru**
+
+Jaringan tidak selalu 100% bisa diandalkan. Komunikasi antarservice dapat mengalami gangguan, misalnya koneksi terputus atau request dan response tidak berhasil sampai ke tujuan. Jadi perlu memiliki mekanisme untuk menangani kegagalan komunikasi. 
+
+**Dampak** 
+
+foodGo tidak memiliki retry dan akan berpengaruh jika terdapat komunikasi dengan service lain gagal maka tidak akan mendapat respon, dan request tidak otomatis untuk dicoba lagi 
+
+**Solusi** 
+
+Menerapkan mekanisme retry saat terjadi kegagalan komunikasi antarservice, karena retry bisa dikombinasikan dengan backoff jadi system akan memberikan jeda sebelum mencoba Kembali dan tidak langsung mengirim request berkali-kali. 
+
+**Trade off**
+
+Retry yang terlalu sering akan membuat request tambahan yang justru meningkatkan beban pada service yang mengalami masalah. Jadi percobaan dan jeda retry perlu dibatasi.
 
 ---
 
