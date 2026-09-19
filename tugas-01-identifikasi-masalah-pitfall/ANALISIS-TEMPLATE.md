@@ -6,7 +6,7 @@
 |---|---|---|
 | Nadia Sabrina Khoiriyah | 103072400087 | [pitfall/bagian yang dikerjakan] |
 | Fadhil Rizqi Adiyatma | 103072400021 | pitfall the network is reliable/bagian 2 |
-| M. Naufal Falih Alhaqi | 103072400027 | pitfall/bagian 3 |
+| M. Naufal Falih Alhaqi | 103072400027 | Single point of failure karena arsitektur monolitik/bagian 3 |
 
 ## Pitfall 1: [Latency is zero] — ditulis oleh [Nadia Sabrina Khoiriyah]
 
