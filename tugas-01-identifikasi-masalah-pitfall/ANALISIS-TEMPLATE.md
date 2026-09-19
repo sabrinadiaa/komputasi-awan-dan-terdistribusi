@@ -28,7 +28,7 @@
 
 ---
 
-## Pitfall 3: Single point of failure karena arsitektur monolitik  — ditulis oleh M. Naufal Falih Alhaqi
+## Pitfall 3: Single point of failure karena arsitektur monolitik  — ditulis oleh Naufal Falih
 
 **Bukti**
 
