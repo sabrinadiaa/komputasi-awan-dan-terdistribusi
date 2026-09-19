@@ -4,9 +4,9 @@
 
 | Nama | NIM | Kontribusi |
 |---|---|---|
-| [nama 1] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [nama 2] | [nim] | [pitfall/bagian yang dikerjakan] |
-| [nama 3] | [nim] | [pitfall/bagian yang dikerjakan] |
+| Nadia Sabrina Khoiriyah | 103072400087 | [pitfall/bagian yang dikerjakan] |
+| Fadhil Rizqi Adiyatma | 103072400021 | [pitfall/bagian yang dikerjakan] |
+| M. Naufal Falih Alhaqi | 103072400027 | [pitfall/bagian yang dikerjakan] |
 
 ## Pitfall 1: [nama pitfall] — ditulis oleh [nama]
 
