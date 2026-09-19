@@ -80,4 +80,12 @@ Pemisahan service membuat sistem menjadi lebih kompleks karena service harus ber
 
 ## Kesimpulan Kelompok
 
+Kegagalan sistem FoodGo berakar dari arsitektur monolitik yang diperparah oleh asumsi komunikasi sinkron tanpa batas toleransi kegagalan (*fault tolerance*). Ketiadaan *timeout* dan *retry* mengabaikan fakta fisik jaringan yang memiliki latensi dan rawan gangguan, sementara penyatuan seluruh modul dalam satu proses menciptakan *Single Point of Failure* (SPOF) fatal yang memicu kegagalan beruntun (*cascading failure*) saat lonjakan trafik jam makan siang.
+
+Untuk mengatasi persoalan ini, arsitektur yang disarankan secara garis besar adalah transisi menuju arsitektur berorientasi layanan (*service-oriented / microservices*) yang dikombinasikan dengan pola *Event-Driven Architecture*:
+1. **Isolasi Domain & Skalabilitas Horisontal:** Memisahkan modul monolitik menjadi layanan mandiri (*Order Service*, *Payment Service*, dan *Notification Service*). Layanan kritis yang fluktuatif seperti pesanan dapat di-*scale-out* secara independen tanpa memboroskan resource untuk modul lainnya.
+2. **Resiliensi Komunikasi Sinkron:** Menerapkan strategi *defensive networking* pada pemanggilan antar-layanan kritis, seperti penetapan batas *timeout* yang terukur, pola *Circuit Breaker* untuk *fail-fast*, serta *retry* berbasis *Exponential Backoff* yang dilengkapi *idempotency key*.
+3. **Komunikasi Asinkron (Message Broker):** Mengalihkan proses yang toleran terhadap latensi (seperti pengiriman notifikasi kurir) menggunakan antrean pesan (*message queue*), sehingga lonjakan pemrosesan eksternal tidak menyandera *thread* pemrosesan pesanan utama.
+
+
 [Ringkasan: jika FoodGo memperbaiki ketiga pitfall ini, apa arsitektur yang disarankan secara garis besar? Kaitkan dengan Tugas 2.]
