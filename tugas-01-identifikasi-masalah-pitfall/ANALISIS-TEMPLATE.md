@@ -26,7 +26,7 @@
 
 **Bukti dari kasus**
 
-Pada case foodGo # network is always reliable, no need for retry, menunjukkan bahwa FoodGo menganggap komunikasi jaringan selalu dapat diandalkan sehingga tidak menyediakan mekanisme untuk mencoba kembali request yang gagal.  
+Pada case foodGo network is always reliable, no need for retry, menunjukkan bahwa FoodGo menganggap komunikasi jaringan selalu dapat diandalkan sehingga tidak menyediakan mekanisme untuk mencoba kembali request yang gagal.  
 
 **Kenapa keliru**
 
