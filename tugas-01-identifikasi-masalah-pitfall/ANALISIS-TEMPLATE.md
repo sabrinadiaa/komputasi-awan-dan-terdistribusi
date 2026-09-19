@@ -88,4 +88,5 @@ Untuk mengatasi persoalan ini, arsitektur yang disarankan secara garis besar ada
 3. **Komunikasi Asinkron (Message Broker):** Mengalihkan proses yang toleran terhadap latensi (seperti pengiriman notifikasi kurir) menggunakan antrean pesan (*message queue*), sehingga lonjakan pemrosesan eksternal tidak menyandera *thread* pemrosesan pesanan utama.
 
 
-[Ringkasan: jika FoodGo memperbaiki ketiga pitfall ini, apa arsitektur yang disarankan secara garis besar? Kaitkan dengan Tugas 2.]
+**Kaitan dengan Tugas 2:**
+Rancangan dekomposisi layanan dan pemisahan jenis komunikasi ini menjadi fondasi langsung untuk perancangan di Tugas 2. Pada Tugas 2, kelompok kami akan memodelkan interaksi keempat modul tersebut ke dalam diagram (menggunakan kombinasi SOA untuk transaksi inti dan Publish-Subscribe untuk notifikasi) serta menganalisis trade-off decoupling pada sistem FoodGo.
