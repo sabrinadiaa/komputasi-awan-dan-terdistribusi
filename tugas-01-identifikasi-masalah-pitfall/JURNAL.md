@@ -36,4 +36,4 @@ Pada bagian dampak tidak ada retry, sebaiknya ditambahkan skenario nyata di bagi
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+| 19 September 2026 | Gemini  | Bagaimana cara menghubungkan kesimpulan pitfall Tugas 1 FoodGo dengan materi perancangan Tugas 2? | Menyarankan kerangka transisi dari monolitik ke SOA yang dipadukan dengan Publish-Subscribe/Message Broker untuk memutus ketergantungan antar-service.  | Kelompok mendiskusikan konsep tersebut lalu merumuskan poin kesimpulan dengan bahasa sendiri yang membagi komunikasi sinkron (order-payment) dan asinkron (kurir/notifikasi) |
