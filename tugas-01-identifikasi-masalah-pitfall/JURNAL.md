@@ -27,6 +27,9 @@
 
 Pada bagian dampak tidak ada retry, sebaiknya ditambahkan skenario nyata di bagian order, contohnya resiko transaksi menggantung atau pesanan langsung gagal saat koneksi terputus
 
+- Naufal mengomentari analisis Nadia: Pada bagian dampak latency, perlu dijelaskan bahwa ketiadaan timeout membuat thread server tertahan (thread starvation) sehingga request pengguna lain ikut terkena dampak.
+
+
 ## Log Penggunaan AI (Level 2)
 
 > Wajib diisi sesuai kebijakan Level 2 di [`../RUBRIK-UMUM.md`](../RUBRIK-UMUM.md). Tulis "Tidak memakai AI" pada baris pertama jika memang tidak dipakai. Hanya untuk brainstorming ide/outline — bukan untuk kode/analisis/teks akhir.
