@@ -27,6 +27,10 @@
 
 Pada bagian dampak tidak ada retry, sebaiknya ditambahkan skenario nyata di bagian order, contohnya resiko transaksi menggantung atau pesanan langsung gagal saat koneksi terputus
 
+- Fadhil mengomentari analisis Naufal:
+
+Solusi pemisahan service sudah tepat, tetapi perlu ditekankan trade-off bahwa pemisahan ke service terpisah justru memunculkan tantangan latensi jaringan baru antarlayanan.
+
 - Naufal mengomentari analisis Nadia: Pada bagian dampak latency, perlu dijelaskan bahwa ketiadaan timeout membuat thread server tertahan (thread starvation) sehingga request pengguna lain ikut terkena dampak.
 
 
