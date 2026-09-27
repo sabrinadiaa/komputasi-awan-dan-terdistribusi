@@ -16,12 +16,12 @@ Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan t
    ```mermaid
    graph LR
       C[Pelanggan]
-      O[Service Pesanan]
-      K[Service Katalog Resto]
-      P[Service Pembayaran]
+      O[Order Service]
+      K[Catalog Service]
+      P[Payment Service]
       B[Message Broker]
-      R[Resto]
-      Q[Service Kurir/notif]
+      R[Restaurant Service]
+      Q[Courier notification service]
 
       C -->|HTTP Request| O
 
@@ -47,22 +47,26 @@ Melanjutkan Tugas 1: FoodGo butuh sistem yang **decoupled** agar tim kurir dan t
 
    Part 1 - Customer membuat pesanan
 
-   Customer memilih menu di aplikasi FoodGo, lalu service pesanan meminta informasi menu dan kesediaan dari service katalog resto. Komunikasi saat customer memilih pesanan tersebut menggunakan sinkron/request-response karena service pesanan membutuhkan informasi untuk melanjutkan proses selanjutnya.
+   Customer memilih menu di aplikasi FoodGo, lalu order service meminta informasi menu dan kesediaan dari Catalog Service. Komunikasi saat customer memilih pesanan tersebut menggunakan sinkron/request-response karena service pesanan membutuhkan informasi terbaru untuk melanjutkan proses selanjutnya.
 
    Part 2 - Customer melakukan pembayaran
 
-   Setelah pesanan berhasil dibuat, service pesanan meminta service pembayaran untuk memproses pembayaran customer. Jika berhasil service pembayaran akan memunculkan konfirmasi pembayaran berhasil dan event dikirim ke message broker.
+   Setelah pesanan berhasil dibuat, order service meminta payment service untuk memproses pembayaran customer. Jika berhasil payment service akan memunculkan konfirmasi pembayaran berhasil dan event dikirim ke message broker. Payment service harus menggunakan timeout dan retry mechanism sesuai masalah di tugas 1 untuk menghindari thread order service menunggu tanpa batas.
 
    Part 3 - Pesanan diteruskan ke resto
 
-   Service resto akan melakukan subscribe terhadap event yang relevan. Resto tidak perlu melakukan request terus menerus ke service pesanan utnuk mengetahui pesanan baru.
+   Restaurant service melakukan subscribe di event OrderCreated dari message broker. Dengan mechanisme ini, order service tidak perlu mengetahui detail implementasi dari restaurant service.
 
    Part 4 - Resto menyelesaikan pesanan
 
-   Setelah pesanan selesai maka informasi diterbitkan sebagai event OrderReady dan dikirim ke message broker. Service kurir lalu menerima event dan melakukan subscribe terhadap event OrderReady.
+   Setelah pesanan selesai maka informasi diterbitkan sebagai event OrderReady dan dikirim ke message broker. Courier notification service lalu menerima event dan melakukan subscribe terhadap event OrderReady. Event OrderReady memungkinkan proses selanjutnya berjalan dan order service tidak menunggu respon langsung dari restaurannya.
 
    Part 5 - Penugasan kurir
 
-   Setelah kurir ditentukan, service kurir menerbitkan event CourierAssigned dan dikirim melalui message broker juga. Service Pesanan dapat memperbarui status pesanan.
+   Setelah kurir ditentukan, Courier notification service menerbitkan event CourierAssigned dan dikirim melalui message broker juga. Order service dapat memperbarui status pesanan. Courir notification service juga menerima event OrderReady yang melakukan proses pencarian kurir. Setelah ditentukan, service menerbitkan event CourierAssigned.
+
+4. Gaya kombinasi arsitektur SOA dan pub-sub ini dapat mengurangi coupling di FoodGo dengan memisahkan beberapa service yang memiliki tanggung jawab berbeda. Beberapa modul seperti order service, payment service, catalog service, dan notifikasi kurir bisa dikembangkan dan diuji tanpa restart seluruh aplikasi.
+
+Pada komunikasi sinkron, service tetap berinteraksi untuk proses yang membutuhkan respon segera, misalnya validasi pembayaran. Sedangkan pada komunikasi asinkron yang menggunakan pub-sub, service producer tidak perlu mengetahui customer secara langsung. Contohnya Order Service hanya menerbitkan event OrderCreated melalui message broker tanpa mengetahui restaurant service memproses event tersebut. Jadi sistem lebih fleksibel saat adanya perubahan.
    
    
