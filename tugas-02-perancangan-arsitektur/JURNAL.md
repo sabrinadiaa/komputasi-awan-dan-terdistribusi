@@ -1,9 +1,9 @@
 # Jurnal Proses — Tugas 2
 
-## [Tanggal]
-- Opsi arsitektur yang dipertimbangkan: ...
-- Kenapa akhirnya pilih [SOA/Pub-Sub]: ...
-- Revisi diagram (versi 1 → versi 2, apa yang berubah dan kenapa): ...
+## 28 September 2026
+- Opsi arsitektur yang dipertimbangkan: **Service-Oriented Architecture (SOA)** dan **Publish-Subscribe**.
+- Kenapa akhirnya pilih [SOA/Pub-Sub]: **Kami memilih kombinasi SOA untuk service inti dan Publish-Subscribe untuk notifikasi. SOA digunakan untuk Order Service, Payment Service, dan Catalog Service karena proses tersebut membutuhkan komunikasi langsung atau sinkron. Publish-Subscribe digunakan untuk komunikasi asinkron seperti pengiriman event OrderCreated ke Restaurant Service, OrderReady ke Courier Notification Service, dan CourierAssigned kembali ke Order Service. Kombinasi ini dipilih karena FoodGo membutuhkan sistem yang lebih decoupled sehingga setiap service tidak terlalu bergantung secara langsung satu sama lain.**
+- Revisi diagram (versi 1 → versi 2, apa yang berubah dan kenapa): **Diagram awal dibuat dengan komponen utama FoodGo dan hubungan antarservice. Pada versi revisi, ditambahkan Message Broker serta pemisahan Restaurant Service dan Courier Notification Service. Jenis komunikasi juga diperjelas menjadi sinkron untuk hubungan Order Service dengan Catalog Service dan Payment Service, serta asinkron untuk event OrderCreated, OrderReady, dan CourierAssigned. Perubahan ini dilakukan agar penggunaan SOA dan Publish-Subscribe serta alur end-to-end FoodGo dapat terlihat lebih jelas.**
 
 ## Log Penggunaan AI (Level 2)
 
@@ -11,4 +11,6 @@
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+| 28 September 2026 | ChatGPT | Bagaimana merancang arsitektur FoodGo berdasarkan hasil analisis pitfall Tugas 1 dengan menggunakan SOA dan Publish-Subscribe? | Menyarankan kombinasi SOA untuk service inti seperti order, payment, dan catalog, serta Publish-Subscribe dengan Message Broker untuk komunikasi asinkron seperti notifikasi resto dan kurir. | Kelompok mendiskusikan saran tersebut dan menyesuaikannya dengan studi kasus FoodGo. Hasil akhirnya menggunakan Order Service, Catalog Service, Payment Service, Restaurant Service, Courier Notification Service, dan Message Broker. |
+| 28 September 2026 | ChatGPT | Proses inti FoodGo itu berupa apa dan bagaimana menentukan komunikasi sinkron dan asinkron? | Menjelaskan bahwa order, payment, dan catalog dapat menggunakan komunikasi sinkron karena membutuhkan respons langsung, sedangkan notifikasi resto dan kurir dapat menggunakan komunikasi asinkron berbasis event. | Kelompok menggunakan penjelasan tersebut untuk menentukan komunikasi sinkron pada Order Service dengan Catalog Service dan Payment Service, serta komunikasi asinkron untuk event OrderCreated, OrderReady, dan CourierAssigned. |
+| 28 September 2026 | ChatGPT | Bagaimana membuat diagram arsitektur FoodGo menggunakan Mermaid yang memenuhi poin tugas? | Memberikan contoh struktur diagram yang memuat service utama, Message Broker, serta hubungan sinkron dan asinkron. | Kelompok menyesuaikan rancangan diagram dengan kebutuhan FoodGo dan menggunakan Mermaid pada README.md. |
