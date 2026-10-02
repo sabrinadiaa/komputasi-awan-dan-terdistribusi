@@ -11,7 +11,8 @@ Hasil percobaan tanpa lock menunjukkan jumlah perhitungan tidak selalu mencapai 
 ## Percobaan dengan Lock
 - Hasil `processed_count` setelah perbaikan:
 100, 100, 100, 100, 100 (sesuai dengan target).
-Adanya lock menyebabkan hanya 1 thread yang boleh membaca, mengubah, dan menulis counter dalam 1 waktu. Sleep tetap di luar lock agar thread berjalan. Lock memastikan hanya 1 thread yang mengubah perhitungan di satu waktu, jadi tidak ada pembaruan counter yang hilang. Bukti hasil percobaan terdapat pada bukti/2-bukti dengan lock.png
+
+- Adanya lock menyebabkan hanya 1 thread yang boleh membaca, mengubah, dan menulis counter dalam 1 waktu. Sleep tetap di luar lock agar thread berjalan. Lock memastikan hanya 1 thread yang mengubah perhitungan di satu waktu, jadi tidak ada pembaruan counter yang hilang. Bukti hasil percobaan terdapat pada bukti/2-bukti dengan lock.png
 
 
 ## Kendala Docker
@@ -23,4 +24,4 @@ Adanya lock menyebabkan hanya 1 thread yang boleh membaca, mengubah, dan menulis
 
 | Tanggal | Tool AI | Prompt yang diberikan | Ringkasan saran/ide AI | Bagaimana diolah jadi tulisan/kode sendiri |
 |---|---|---|---|---|
-| ... | ... | ... | ... | ... |
+| 2 Oktober 2026 | GPT | Meminta penjelasan umum tentang multithreading dan race condition | Mendapat penjelasan terkait lock dan race condition | Analisis ditulis dan disesuaikan sendiri |
