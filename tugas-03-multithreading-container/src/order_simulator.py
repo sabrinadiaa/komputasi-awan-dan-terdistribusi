@@ -1,46 +1,55 @@
 """
 Tugas 3 - Simulasi Pesanan Masuk dengan Multithreading
 
-Skeleton ini sengaja belum lengkap. Isi bagian bertanda TODO.
-Jangan mengubah nama fungsi (dipakai untuk pengecekan otomatis oleh asisten).
+Program mensimulasikan banyak pesanan yang diproses
+secara konkuren menggunakan multithreading.
+
+Program juga menyediakan dua mode:
+- USE_LOCK=0 -> tanpa Lock, untuk menunjukkan race condition
+- USE_LOCK=1 -> menggunakan Lock, untuk memperbaiki race condition
 """
 
 import threading
 import random
 import time
+import os
 
-NUM_ORDERS = 100        # jumlah pesanan simulasi yang masuk
-NUM_WORKERS = 10        # jumlah thread pekerja
+
+NUM_ORDERS = 100
+NUM_WORKERS = 10
 
 # Counter bersama untuk menghitung total pesanan yang berhasil diproses.
-# Sengaja rawan race condition jika diakses tanpa proteksi.
 processed_count = 0
 
-# TODO 1: Buat objek Lock di sini untuk melindungi `processed_count`.
+# Lock untuk melindungi processed_count.
 lock = threading.Lock()
+
+# Mode dapat diubah melalui environment variable:
+# USE_LOCK=0 -> tanpa Lock
+# USE_LOCK=1 -> dengan Lock
+USE_LOCK = os.getenv("USE_LOCK", "1") == "1"
 
 
 def process_order(order_id: int) -> None:
     """Proses satu pesanan. Dipanggil oleh tiap thread pekerja."""
     global processed_count
 
-    # Simulasikan kerja nyata (mis. validasi, hitung total harga)
+    # Simulasikan pekerjaan nyata.
     time.sleep(random.uniform(0.001, 0.01))
 
-    # TODO 2: Tambahkan increment `processed_count` DI SINI.
-    # Langkah 1: jalankan dulu tanpa lock (increment biasa: processed_count += 1)
-    #            dan buktikan hasil akhirnya sering salah (< NUM_ORDERS).
-    # Langkah 2: bungkus increment dengan `with lock:` dan buktikan hasilnya
-    #            selalu tepat NUM_ORDERS. Simpan bukti kedua kondisi ini
-    #            di JURNAL.md / folder bukti/.
-    
-    # tanpa lock
-    #current = processed_count
-    #time.sleep(random.uniform(0.001, 0.01))
-    #processed_count = current + 1
-    # dengan lock
-    with lock: 
-        processed_count += 1
+    if USE_LOCK:
+        # Versi aman menggunakan Lock.
+        with lock:
+            processed_count += 1
+    else:
+        # Versi sengaja tidak aman untuk menunjukkan race condition.
+        current = processed_count
+
+        # Memberikan kesempatan thread lain mengambil alih
+        # sehingga race condition lebih mudah terjadi.
+        time.sleep(random.uniform(0.001, 0.01))
+
+        processed_count = current + 1
 
 
 def worker(order_ids: list) -> None:
@@ -52,33 +61,42 @@ def worker(order_ids: list) -> None:
 def main() -> None:
     order_ids = list(range(1, NUM_ORDERS + 1))
 
-    # TODO 3: Bagi `order_ids` menjadi NUM_WORKERS bagian, buat satu
-    # threading.Thread per bagian yang menjalankan `worker(...)`,
-    # start semua thread, lalu join semua thread sebelum lanjut.
     threads = []
+
+    # Membagi pesanan menjadi beberapa bagian untuk setiap worker.
     chunk = NUM_ORDERS // NUM_WORKERS
+
     for i in range(NUM_WORKERS):
         start = i * chunk
-        
+
         if i == NUM_WORKERS - 1:
             end = NUM_ORDERS
         else:
             end = start + chunk
-        
-        workerOrder = order_ids[start:end]
-        
+
+        worker_orders = order_ids[start:end]
+
         thread = threading.Thread(
             target=worker,
-            args=(workerOrder,)
+            args=(worker_orders,)
         )
+
         threads.append(thread)
         thread.start()
-    for t in threads:
-        t.join()
 
-    print(f"Total pesanan diproses: {processed_count} (seharusnya {NUM_ORDERS})")
+    # Menunggu semua thread selesai.
+    for thread in threads:
+        thread.join()
+
+    print(
+        f"Total pesanan diproses: "
+        f"{processed_count} (seharusnya {NUM_ORDERS})"
+    )
+
     if processed_count != NUM_ORDERS:
-        print("RACE CONDITION TERDETEKSI - lengkapi TODO 1 & TODO 2 dengan Lock!")
+        print("RACE CONDITION TERDETEKSI - tanpa Lock.")
+    else:
+        print("PEMROSESAN BERHASIL - semua pesanan berhasil diproses.")
 
 
 if __name__ == "__main__":
