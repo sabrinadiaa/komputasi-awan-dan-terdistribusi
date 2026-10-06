@@ -31,7 +31,6 @@
   queue dengan nama `pembayaran_berhasil`.
 
 ## Uji "Pesan Tidak Hilang"
-
 ### Langkah pengujian
 
 1. Menjalankan RabbitMQ menggunakan Docker Compose.
@@ -49,11 +48,43 @@
 
 ### Hasil yang diamati
 
+Pengujian menunjukkan bahwa pesan tidak hilang ketika consumer sedang
+tidak aktif. Publisher tetap dapat mengirim event pembayaran ke RabbitMQ
+tanpa harus menunggu consumer.
 
+RabbitMQ menyimpan pesan tersebut pada queue `pembayaran_berhasil`.
+Ketika consumer dijalankan kembali, pesan yang tersimpan berhasil
+diterima dan diproses oleh modul Kurir/Notifikasi.
+
+Pada RabbitMQ Management Dashboard, terdapat 3 pesan dengan status
+`Ready` ketika consumer dimatikan. Setelah consumer dijalankan kembali,
+ketiga pesan tersebut berhasil diproses dan jumlah pesan pada queue
+menjadi 0.
+
+Hasil tersebut membuktikan adanya **asynchronous decoupling**, yaitu
+publisher dan consumer tidak harus aktif pada waktu yang sama.
 
 ## Analisis Pemilihan Pola Komunikasi
 
+Message Queue sesuai digunakan untuk skenario notifikasi pembayaran
+karena modul Pembayaran tidak membutuhkan respons langsung dari modul
+Kurir/Notifikasi.
 
+Publisher dapat mengirim event ke RabbitMQ kemudian melanjutkan
+proses lainnya tanpa menunggu consumer. RabbitMQ menyimpan pesan di
+dalam queue sampai consumer siap memprosesnya.
+
+Penggunaan Docker membantu menyediakan RabbitMQ secara lokal sehingga
+broker dapat dijalankan dan dihentikan dengan mudah selama pengujian.
+
+Jika komunikasi menggunakan RPC untuk skenario notifikasi tersebut,
+modul Pembayaran harus menunggu respons dari modul Kurir. Jika modul
+Kurir sedang sibuk, lambat, atau tidak tersedia, proses pada modul
+Pembayaran dapat ikut mengalami keterlambatan atau timeout.
+
+Dengan menggunakan Message Queue, publisher dan consumer menjadi lebih
+terpisah (decoupled), sehingga sistem lebih sesuai untuk komunikasi
+notifikasi yang bersifat asynchronous.
 
 ## Log Penggunaan AI (Level 2)
 
