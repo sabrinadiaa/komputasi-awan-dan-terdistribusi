@@ -1,7 +1,14 @@
 # Jurnal Proses — Tugas 4
 
 ## Jalur yang dipilih
+- **Jalur A - rpc
 
+  Jalur A dipilih karena proses pengecekan saldo membutuhkan respon secara langsung dari modul pembayaran.
+  Pada pengujian pertama, server.py dijalankan dulu, kemudia client.py dijalankan di terminal kedua. Client berhasil memanggil cek_saldo dan proses_pembayaran. Saldo user1 awalnya 50000, setelah transaksi sebesar 20000 saldo akhirnya menjadi 30000. Jeda time sleep pada server menunjukkan bahwa client harus menunggu server menyelesaikan request sebelum menerima hasil.
+  
+  Pengujian kedua, server.py dimatikan, lalu client.py dijalankan. Output client.py yaitu error, request gagal karena server tidak ada yang aktif.
+
+  Jalur A ini membuktikan implementasi modul pesanan dan pembayaran membutuhkan komunikasi sinkron, client harus mendapat jawaban secara langsung sebelum melanjutkan proses. Client.py berperan sebagai modul pesanan yang meminta informasi saldo dan memproses pembayaran, sedangkan server.py sebagai modul pembayaran yang menerima request. RPC dipilihh karena mekanismenya memanggil fungsi, dan fungsi tersebut dijalankan pada server lewat jaringan.
 - **Jalur B — Message Queue / Message-Oriented Middleware (MQ/MOM)**
 
   Kelompok memilih Jalur B karena skenario notifikasi pembayaran dari
@@ -96,3 +103,4 @@ notifikasi yang bersifat asynchronous.
 |---|---|---|---|---|
 | 6 Oktober 2026 | GPT | Meminta panduan langkah-langkah pengerjaan menggunakan Message Queue/RabbitMQ | Mendapat penjelasan mengenai alur publisher, RabbitMQ queue, consumer, Docker, dan asynchronous decoupling | Langkah pengujian dilakukan sendiri melalui VS Code, Docker, RabbitMQ Dashboard, `publisher.py`, dan `consumer.py` |
 | 6 Oktober 2026 | GPT | Meminta penjelasan tentang pengujian pesan tidak hilang ketika consumer dimatikan | Mendapat ide untuk mematikan consumer, menjalankan publisher, melihat pesan berstatus Ready pada RabbitMQ, kemudian menyalakan kembali consumer | Skenario dijalankan sendiri dan hasil pengujian dicatat berdasarkan output terminal dan RabbitMQ Dashboard |
+| 10 Oktober 2026 | GPT | Meminta penjelasan konsep RPC dan cara pengujiannya | Mendapat pemahaman tentang komunikasi sinkron, hubungan client-server, serta pengujian saat server aktif dan mati | Penjelasan digunakan sebagai panduan pemahaman, sedangkan implementasi, pengujian, dan penulisan akhir dilakukan sendiri |
