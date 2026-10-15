@@ -74,53 +74,32 @@ class Node:
         
         if msg_type != "PING":
             print(f"[Node {self.node_id}] " f"Menerima pesan '{msg_type}' dari node {sender_id}")
-        # todo 1: tangani tiga jenis pesan berikut:
         #   - "ELECTION": node lain memulai election. 
         # Jika menerima ELECTION
         if msg_type == "ELECTION":
-
-             #Jika sudah ada leader, abaikan election lama
-            if self.leader_id is not None:
-                return
-            
-            # Jika ID kita lebih besar, balas OK
+  
+            #Jika ID kita lebih besar, balas OK
             if self.node_id > sender_id:
-
                 sender_port = self.peers[sender_id]
 
-                self.send_message(
-                    sender_port,
-                    "OK"
-                )
+                self.send_message(sender_port, "OK")
 
-                print(
-                    f"[Node {self.node_id}] "
-                    f"Mengirim OK ke node {sender_id}"
-                )
+                print(f"[Node {self.node_id}] " f"Mengirim OK ke node {sender_id}")
 
-                # Mulai election sendiri jika belum berjalan
+                #Mulai election sendiri jika belum berjalan
                 with self.lock:
                     already_running = self.election_running
 
                 if not already_running:
-
-                    threading.Thread(
-                        target=self.start_election,
-                        daemon=True
-                    ).start()
+                    threading.Thread(target=self.start_election, daemon=True).start()
 
 
         # Jika menerima OK
         elif msg_type == "OK":
-
             with self.lock:
                 self.received_ok = True
 
-            print(
-                f"[Node {self.node_id}] "
-                "Menerima OK, ada node lebih tinggi"
-            )
-
+            print(f"[Node {self.node_id}] " "Menerima OK, ada node lebih tinggi")
 
         # Jika menerima COORDINATOR
         elif msg_type == "COORDINATOR":
@@ -129,11 +108,7 @@ class Node:
                 self.leader_id = sender_id
                 self.election_running = False
 
-            print(
-                f"[Node {self.node_id}] "
-                f"Leader baru = Node {sender_id}"
-            )
-
+            print(f"[Node {self.node_id}] " f"Leader baru = Node {sender_id}")
 
         # Jika menerima PING
         elif msg_type == "PING":
@@ -208,32 +183,34 @@ class Node:
             # (leader mati) dan node ini belum tahu leader baru, panggil
             # start_election().
             # Jika sudah ada leader
-            if self.leader_id is not None and self.leader_id != self.node_id:
-                # Ambil port leader
-                leader_port = self.peers.get(self.leader_id)
+            with self.lock:
+                leader = self.leader_id
+                running = self.election_running
 
-                # Coba koneksi ke leader
-                alive = self.send_message(
-                    leader_port,
-                    "PING"
-                )
+            # Tidak tahu leader & tidak sedang election -> mulai election
+            if leader is None:
+                if not running:
+                    print(f"[Node {self.node_id}] Belum ada leader, mulai election")
+                    threading.Thread(target=self.start_election, daemon=True).start()
+                continue
 
-                # Jika leader mati
-                if not alive:
+            # Saya sendiri leader-nya, tidak perlu ping
+            if leader == self.node_id:
+                continue
 
-                    print(
-                        f"[Node {self.node_id}] "
-                        "Leader mati, mulai election"
-                    )
+            # Ping leader
+            leader_port = self.peers.get(leader)
+            alive = leader_port is not None and self.send_message(leader_port, "PING")
 
-                    with self.lock:
+            if not alive:
+                print(f"[Node {self.node_id}] Leader mati, mulai election")
+
+                with self.lock:
+                    # Hanya reset kalau leader belum berganti selagi PING berjalan
+                    if self.leader_id == leader:
                         self.leader_id = None
 
-
-                    threading.Thread(
-                        target=self.start_election,
-                        daemon=True
-                    ).start()
+                threading.Thread(target=self.start_election, daemon=True).start()
 
 def main():
     parser = argparse.ArgumentParser()
