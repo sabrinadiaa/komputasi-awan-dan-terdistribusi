@@ -30,14 +30,32 @@ class ChordRing:
         node_id = hash_id(node_name)
 
         # TODO 1: tambahkan node_id -> node_ip ke self.nodes.
-        # TODO 2: cari successor LAMA dari node_id ini (successor sebelum node
-        # baru bergabung, gunakan find_successor() dengan node_id INI dikecualikan
+        if node_id in self.nodes:
+            print(f"Node '{node_name}' sudaha ada")
+            return
+        # TODO 2: cari successor LAMA dari node_id ini (successor sebelum node baru bergabung)
+        oldOwners = {}
+        #  gunakan find_successor() dengan node_id INI dikecualikan
         # dulu dari self.nodes saat mencari).
+        if self.nodes:
+            for key_hash in self.data:
+                oldOwners[key_hash] = self.find_successor(key_hash)
+        self.nodes[node_id] = node_ip
         # TODO 3: pindahkan semua key di self.data yang seharusnya menjadi
         # tanggung jawab node baru (key dengan hash <= node_id, tapi masih
         # dipegang oleh successor lama) ke bawah tanggung jawab node baru.
         # (Untuk simulasi sederhana, cukup print log siapa mengambil alih apa -
         # tidak perlu benar-benar memindahkan struktur data kompleks.)
+        print(f"[JOIN] Node '{node_name}' (id={node_id}) bergabung, alamat {node_ip}")
+
+        for key_hash, (kurir_id, ip_kurir) in self.data.items():
+            new_owner = self.find_successor(key_hash)
+
+            if oldOwners.get(key_hash) != new_owner and new_owner == node_id:
+                print(
+                    f"[TRANSFER] {kurir_id}: "
+                    f"node {oldOwners[key_hash]} -> node {new_owner}"
+                )
         print(f"[TODO] Node '{node_name}' (id={node_id}) bergabung, alamat {node_ip}")
 
     def leave(self, node_name: str):
@@ -46,8 +64,32 @@ class ChordRing:
         node_id = hash_id(node_name)
 
         # TODO 4: hapus node_id dari self.nodes.
+        if node_id not in self.nodes:
+            print(f"node '{node_name}' tidak ditemukan")
+            return
+        if len(self.nodes) == 1:
+            print("node terakhir tidak bisa keluar")
+            return
         # TODO 5: cari successor BARU untuk tiap key yang tadinya dipegang
         # node ini, pindahkan ke successor tersebut.
+        keysToMove = []
+        for key_hash in self.data:
+            if self.find_successor(key_hash) == node_id:
+                keysToMove.append(key_hash)
+                
+        #hapus node 
+        del self.nodes[node_id]
+        print(f"[LEAVE] Node '{node_name}' (id={node_id}) keluar dari ring.")
+
+        #menentukan successor baru dan tampilkan perpindahan mapping.
+        for key_hash in keysToMove:
+            kurir_id, ip_kurir = self.data[key_hash]
+            new_owner = self.find_successor(key_hash)
+
+            print(
+                f"[TRANSFER] {kurir_id}: "
+                f"node {node_id} -> node {new_owner}"
+            )
         print(f"[TODO] Node '{node_name}' (id={node_id}) keluar dari ring")
 
     def find_successor(self, key_hash: int) -> int:
@@ -56,6 +98,17 @@ class ChordRing:
         ke node dengan hash terkecil di ring (karena ring melingkar)."""
         # TODO 6: implementasikan logika successor di atas menggunakan
         # self.nodes.keys(). Kembalikan node_id (bukan IP).
+        if not self.nodes:
+            raise ValueError("Ring belum memiliki node.")
+
+        sorted_nodes = sorted(self.nodes.keys())
+
+        for node_id in sorted_nodes:
+            if node_id >= key_hash:
+                return node_id
+
+        # Wrap-around ke node terkecil.
+        return sorted_nodes[0]
         pass
 
     def register_kurir(self, kurir_id: str, ip_kurir: str):
@@ -63,6 +116,16 @@ class ChordRing:
         key_hash = hash_id(kurir_id)
         # TODO 7: panggil find_successor(key_hash) untuk menentukan node
         # penanggung jawab, lalu simpan (kurir_id, ip_kurir) ke self.data[key_hash].
+        # Tentukan node penanggung jawab.
+        node_id = self.find_successor(key_hash)
+
+        # Simpan mapping kurir.
+        self.data[key_hash] = (kurir_id, ip_kurir)
+
+        print(
+            f"[REGISTER] {kurir_id} -> {ip_kurir} "
+            f"(Node: {node_id})"
+        )
         pass
 
     def lookup(self, kurir_id: str) -> str | None:
@@ -70,6 +133,17 @@ class ChordRing:
         key_hash = hash_id(kurir_id)
         # TODO 8: gunakan find_successor(key_hash) untuk menemukan node
         # penanggung jawab, lalu kembalikan ip_kurir dari self.data jika ada.
+        # Tentukan node yang bertanggung jawab.
+        node_id = self.find_successor(key_hash)
+
+        # Cari data kurir.
+        record = self.data.get(key_hash)
+
+        if record is None or record[0] != kurir_id:
+            return None
+
+        # Kembalikan alamat IP kurir.
+        return record[1]
         pass
 
 
