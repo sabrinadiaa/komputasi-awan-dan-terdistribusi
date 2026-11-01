@@ -170,7 +170,7 @@ def main():
     print("kurir-001 ->", ring.lookup("kurir-001"))
 
     print("\n--- Sebuah node keluar ---")
-    ring.leave("node-jakarta-1")
+    ring.leave("node-jakarta-2")
     print("kurir-001 ->", ring.lookup("kurir-001"))
     print("kurir-002 ->", ring.lookup("kurir-002"))
 
